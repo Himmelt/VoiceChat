@@ -8,7 +8,6 @@ class JitterBuffer {
     private byte[] buffer;
     private int threshold;
 
-
     JitterBuffer(AudioFormat format, int jitter) {
         this.format = format;
         this.updateJitter(jitter);

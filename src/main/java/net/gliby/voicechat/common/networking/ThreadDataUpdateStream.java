@@ -5,7 +5,6 @@ public class ThreadDataUpdateStream implements Runnable {
     private static final int ARBITRARY_TIMEOUT = 350;
     private final ServerStreamManager dataManager;
 
-
     public ThreadDataUpdateStream(ServerStreamManager dataManager) {
         this.dataManager = dataManager;
     }

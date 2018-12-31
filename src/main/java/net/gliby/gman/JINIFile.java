@@ -78,7 +78,7 @@ public class JINIFile extends ArrayList<String> {
     public boolean ReadBool(String Section, String key, boolean defaultValue) throws JINIFile.JINIReadException {
         String s = this.get(this.ValuePosition(Section, key)).substring(key.length() + 1, this.get(this.ValuePosition(Section, key)).length());
         if (this.ValuePosition(Section, key) > 0) {
-           return Boolean.parseBoolean(s);
+            return Boolean.parseBoolean(s);
         } else {
             throw new JINIFile.JINIReadException("ReadBool operation failed: " + s);
         }
@@ -88,7 +88,7 @@ public class JINIFile extends ArrayList<String> {
         new Float(0.0F);
         if (this.ValuePosition(Section, key) > 0) {
             int strLen = key.length() + 1;
-           return Float.valueOf(this.get(this.ValuePosition(Section, key)).substring(strLen, this.get(this.ValuePosition(Section, key)).length()));
+            return Float.valueOf(this.get(this.ValuePosition(Section, key)).substring(strLen, this.get(this.ValuePosition(Section, key)).length()));
         } else {
             throw new JINIFile.JINIReadException("ReadFloat operation failed.");
         }
@@ -97,7 +97,7 @@ public class JINIFile extends ArrayList<String> {
     public int ReadInteger(String Section, String key, int defaultValue) throws JINIFile.JINIReadException {
         if (this.ValuePosition(Section, key) > 0) {
             int strLen = key.length() + 1;
-           return Integer.parseInt(this.get(this.ValuePosition(Section, key)).substring(strLen, this.get(this.ValuePosition(Section, key)).length()));
+            return Integer.parseInt(this.get(this.ValuePosition(Section, key)).substring(strLen, this.get(this.ValuePosition(Section, key)).length()));
         } else {
             throw new JINIFile.JINIReadException("ReadInteger operation failed.");
         }

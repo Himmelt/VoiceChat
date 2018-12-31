@@ -18,7 +18,6 @@ public class Recorder implements Runnable {
     private boolean recording;
     private Thread thread;
 
-
     public Recorder(VoiceChatClient voiceChat) {
         this.voiceChat = voiceChat;
     }

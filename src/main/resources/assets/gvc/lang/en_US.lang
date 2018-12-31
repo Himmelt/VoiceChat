@@ -47,3 +47,5 @@ menu.gman.supportGliby.description=Support the creator of the mod, Gliby, by don
 menu.gman.supportGliby.contact=You can reach Gliby at §a@theGliby§f on twitter, or by email §bcontact@gliby.net§f.
 menu.serverNotSupported=Server doesn't support voice chat.
 menu.noInputDevicesFound=No input devices found, add input device and restart Minecraft.
+
+voicechat.cannotSend=Server doesn't support voice chat.

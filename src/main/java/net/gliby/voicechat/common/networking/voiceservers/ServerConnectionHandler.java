@@ -15,14 +15,14 @@
  */
 package net.gliby.voicechat.common.networking.voiceservers;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
 import net.gliby.voicechat.VoiceChat;
 import net.gliby.voicechat.common.VoiceChatServer;
 import net.gliby.voicechat.common.networking.packets.MinecraftClientVoiceAuthenticatedServer;
 import net.gliby.voicechat.common.networking.packets.MinecraftClientVoiceServerPacket;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import java.security.MessageDigest;
@@ -96,4 +96,3 @@ public class ServerConnectionHandler {
     }
 
 }
-

@@ -10,7 +10,6 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import org.lwjgl.opengl.GL11;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -97,14 +96,14 @@ public class GuiScreenVoiceChatOptions extends GuiScreen {
         this.drawDefaultBackground();
         GL11.glPushMatrix();
         float scale = 1.5F;
-        GL11.glTranslatef((float) (this.width / 2) - (float) (this.fontRenderer.getStringWidth("Gliby\'s Voice Chat Options") / 2) * 1.5F, 0.0F, 0.0F);
+        GL11.glTranslatef((float) (this.width / 2) - (float) (this.fontRendererObj.getStringWidth("Gliby\'s Voice Chat Options") / 2) * 1.5F, 0.0F, 0.0F);
         GL11.glScalef(1.5F, 1.5F, 0.0F);
-        this.drawString(this.fontRenderer, "Gliby\'s Voice Chat Options", 0, 6, -1);
+        this.drawString(this.fontRendererObj, "Gliby\'s Voice Chat Options", 0, 6, -1);
         GL11.glPopMatrix();
 
         for (int i = 0; i < this.warningMessages.size(); ++i) {
-            int warnY = i * this.fontRenderer.FONT_HEIGHT + this.height / 2 + 66 - this.fontRenderer.FONT_HEIGHT * this.warningMessages.size() / 2;
-            this.drawCenteredString(this.fontRenderer, this.warningMessages.get(i), this.width / 2, warnY, -1);
+            int warnY = i * this.fontRendererObj.FONT_HEIGHT + this.height / 2 + 66 - this.fontRendererObj.FONT_HEIGHT * this.warningMessages.size() / 2;
+            this.drawCenteredString(this.fontRendererObj, this.warningMessages.get(i), this.width / 2, warnY, -1);
         }
 
         super.drawScreen(x, y, tick);
@@ -143,8 +142,12 @@ public class GuiScreenVoiceChatOptions extends GuiScreen {
         buttonList.add(this.mutePlayer = new GuiCustomButton(897, this.width / 2 - 152, this.height / 2 + 73 - 55, 304, 20, I18n.format("menu.mutePlayers")));
         buttonList.add(this.dropDown);
         if (this.voiceChat.getSettings().getDeviceHandler().isEmpty()) {
-            this.buttonList.get(0).enabled = false;
-            this.buttonList.get(3).enabled = false;
+            Object button = this.buttonList.get(0);
+            if (button instanceof GuiButton) ((GuiButton) button).enabled = false;
+            button = buttonList.get(3);
+            if (button instanceof GuiButton) ((GuiButton) button).enabled = false;
+            //this.buttonList.get(0).enabled = false;
+            //this.buttonList.get(3).enabled = false;
             this.boostSlider.enabled = false;
             this.mutePlayer.enabled = false;
             this.microphoneMode.enabled = false;
@@ -167,9 +170,8 @@ public class GuiScreenVoiceChatOptions extends GuiScreen {
         }
 
         if (!this.voiceChat.getClientNetwork().isConnected() && !this.mc.isSingleplayer()) {
-            this.warningMessages.add(ChatFormatting.RED + I18n.format("Server doesn\'t support voice chat."));
+            this.warningMessages.add(ChatFormatting.RED + I18n.format("voicechat.cannotSend"));
         }
-
     }
 
     @Override
@@ -191,9 +193,9 @@ public class GuiScreenVoiceChatOptions extends GuiScreen {
             for (int e = 0; e < this.warningMessages.size(); ++e) {
                 String s = this.warningMessages.get(e);
                 if (s.equals(this.updateMessage)) {
-                    int warnY = e * this.fontRenderer.FONT_HEIGHT + this.height / 2 + 66 - this.fontRenderer.FONT_HEIGHT * this.warningMessages.size() / 2;
-                    int length = this.fontRenderer.getStringWidth(s);
-                    if (this.inBounds(x, y, this.width / 2 - length / 2, warnY, length, this.fontRenderer.FONT_HEIGHT)) {
+                    int warnY = e * this.fontRendererObj.FONT_HEIGHT + this.height / 2 + 66 - this.fontRendererObj.FONT_HEIGHT * this.warningMessages.size() / 2;
+                    int length = this.fontRendererObj.getStringWidth(s);
+                    if (this.inBounds(x, y, this.width / 2 - length / 2, warnY, length, this.fontRendererObj.FONT_HEIGHT)) {
                         this.openURL(this.voiceChat.modInfo.updateURL);
                     }
                 }
@@ -209,13 +211,7 @@ public class GuiScreenVoiceChatOptions extends GuiScreen {
                 this.dropDown.setDisplayString(var9.getName());
             }
         }
-
-        try {
-            super.mouseClicked(x, y, b);
-        } catch (IOException var8) {
-            var8.printStackTrace();
-        }
-
+        super.mouseClicked(x, y, b);
     }
 
     @Override
@@ -226,15 +222,14 @@ public class GuiScreenVoiceChatOptions extends GuiScreen {
 
     }
 
-    private void openURL(String par1URI) {
+    private void openURL(String url) {
         try {
             Class<?> clazz = Class.forName("java.awt.Desktop");
             Object object = clazz.getMethod("getDesktop", new Class[0]).invoke(null);
-            clazz.getMethod("browse", new Class[]{URI.class}).invoke(object, new URI(par1URI));
+            clazz.getMethod("browse", URI.class).invoke(object, new URI(url));
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
-
     }
 
     @Override

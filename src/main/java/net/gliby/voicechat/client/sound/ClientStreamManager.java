@@ -6,9 +6,9 @@ import net.gliby.voicechat.client.sound.thread.ThreadSoundQueue;
 import net.gliby.voicechat.client.sound.thread.ThreadUpdateStream;
 import net.gliby.voicechat.common.PlayerProxy;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.client.gui.GuiScreenOptionsSounds;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.SoundCategory;
 import org.lwjgl.util.vector.Vector3f;
 
 import javax.sound.sampled.AudioFormat;
@@ -129,7 +129,7 @@ public class ClientStreamManager {
             Vector3f position = player.position();
             this.voiceChat.sndSystem.rawDataStream(universalAudioFormat, true, identifier, position.x, position.y, position.z, 2, (float) this.voiceChat.getSettings().getSoundDistance());
         } else {
-            this.voiceChat.sndSystem.rawDataStream(universalAudioFormat, true, identifier, (float) this.mc.player.posX, (float) this.mc.player.posY, (float) this.mc.player.posZ, 2, (float) this.voiceChat.getSettings().getSoundDistance());
+            this.voiceChat.sndSystem.rawDataStream(universalAudioFormat, true, identifier, (float) this.mc.thePlayer.posX, (float) this.mc.thePlayer.posY, (float) this.mc.thePlayer.posZ, 2, (float) this.voiceChat.getSettings().getSoundDistance());
         }
 
         this.voiceChat.sndSystem.setPitch(identifier, 1.0F);
@@ -144,10 +144,10 @@ public class ClientStreamManager {
 
     private PlayerProxy getPlayerData(int entityId) {
         PlayerProxy proxy = this.playerData.get(entityId);
-        EntityPlayer entity = (EntityPlayer) this.mc.world.getEntityByID(entityId);
+        EntityPlayer entity = (EntityPlayer) this.mc.theWorld.getEntityByID(entityId);
         if (proxy == null) {
             if (entity != null) {
-                proxy = new PlayerProxy(entity, entity.getEntityId(), entity.getName(), entity.posX, entity.posY, entity.posZ);
+                proxy = new PlayerProxy(entity, entity.getEntityId(), entity.getCommandSenderName(), entity.posX, entity.posY, entity.posZ);
             } else {
                 VoiceChat.getLogger().error("Major error, no entity found for player.");
                 proxy = new PlayerProxy(null, entityId, "" + entityId, 0.0D, 0.0D, 0.0D);
@@ -156,7 +156,7 @@ public class ClientStreamManager {
             this.playerData.put(entityId, proxy);
         } else if (entity != null) {
             proxy.setPlayer(entity);
-            proxy.setName(entity.getName());
+            proxy.setName(entity.getCommandSenderName());
         }
 
         return proxy;
@@ -245,7 +245,7 @@ public class ClientStreamManager {
             this.WEATHER = this.mc.gameSettings.getSoundLevel(SoundCategory.WEATHER);
             this.RECORDS = this.mc.gameSettings.getSoundLevel(SoundCategory.RECORDS);
             this.BLOCKS = this.mc.gameSettings.getSoundLevel(SoundCategory.BLOCKS);
-            this.MOBS = this.mc.gameSettings.getSoundLevel(SoundCategory.HOSTILE);
+            //this.MOBS = this.mc.gameSettings.getSoundLevel(SoundCategory.HOSTILE);
             this.ANIMALS = this.mc.gameSettings.getSoundLevel(SoundCategory.PLAYERS);
             if (this.mc.gameSettings.getSoundLevel(SoundCategory.WEATHER) > 0.15F) {
                 this.mc.gameSettings.setSoundLevel(SoundCategory.WEATHER, 0.15F);
@@ -259,13 +259,13 @@ public class ClientStreamManager {
                 this.mc.gameSettings.setSoundLevel(SoundCategory.BLOCKS, 0.15F);
             }
 
-            if (this.mc.gameSettings.getSoundLevel(SoundCategory.HOSTILE) > 0.15F) {
-                this.mc.gameSettings.setSoundLevel(SoundCategory.HOSTILE, 0.15F);
-            }
+            //if (this.mc.gameSettings.getSoundLevel(SoundCategory.HOSTILE) > 0.15F) {
+            //    this.mc.gameSettings.setSoundLevel(SoundCategory.HOSTILE, 0.15F);
+            //}
 
-            if (this.mc.gameSettings.getSoundLevel(SoundCategory.NEUTRAL) > 0.15F) {
-                this.mc.gameSettings.setSoundLevel(SoundCategory.NEUTRAL, 0.15F);
-            }
+            //if (this.mc.gameSettings.getSoundLevel(SoundCategory.NEUTRAL) > 0.15F) {
+            //    this.mc.gameSettings.setSoundLevel(SoundCategory.NEUTRAL, 0.15F);
+            //}
 
             this.volumeControlActive = true;
         }
@@ -277,11 +277,10 @@ public class ClientStreamManager {
             this.mc.gameSettings.setSoundLevel(SoundCategory.WEATHER, this.WEATHER);
             this.mc.gameSettings.setSoundLevel(SoundCategory.RECORDS, this.RECORDS);
             this.mc.gameSettings.setSoundLevel(SoundCategory.BLOCKS, this.BLOCKS);
-            this.mc.gameSettings.setSoundLevel(SoundCategory.HOSTILE, this.MOBS);
-            this.mc.gameSettings.setSoundLevel(SoundCategory.NEUTRAL, this.ANIMALS);
+            //this.mc.gameSettings.setSoundLevel(SoundCategory.HOSTILE, this.MOBS);
+            //this.mc.gameSettings.setSoundLevel(SoundCategory.NEUTRAL, this.ANIMALS);
             this.volumeControlActive = false;
         }
-
     }
 
 }

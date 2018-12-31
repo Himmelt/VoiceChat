@@ -12,7 +12,6 @@ public class EntityHandler {
     private final ServerStreamManager dataManager;
     private final VoiceChatServer voiceChat;
 
-
     public EntityHandler(VoiceChatServer voiceChat) {
         this.voiceChat = voiceChat;
         this.dataManager = voiceChat.serverNetwork.dataManager;

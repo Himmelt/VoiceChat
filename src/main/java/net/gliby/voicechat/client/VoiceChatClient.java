@@ -1,5 +1,11 @@
 package net.gliby.voicechat.client;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.ModMetadata;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.gliby.voicechat.VoiceChat;
 import net.gliby.voicechat.client.debug.Statistics;
 import net.gliby.voicechat.client.gui.GuiInGameHandlerVoiceChat;
@@ -17,12 +23,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.audio.SoundManager;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.ModMetadata;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
@@ -79,7 +79,7 @@ public class VoiceChatClient extends VoiceChatServer {
         try {
             Field e = SoundHandler.class.getDeclaredFields()[5];
             e.setAccessible(true);
-           return (SoundManager) e.get(mc.getSoundHandler());
+            return (SoundManager) e.get(mc.getSoundHandler());
         } catch (Exception var4) {
             var4.printStackTrace();
             return null;

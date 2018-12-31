@@ -4,14 +4,11 @@ import net.gliby.voicechat.VoiceChat;
 import net.gliby.voicechat.client.Settings;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +48,41 @@ public class GuiUIPlacement extends GuiScreen {
         float f1 = (float) (par4 >> 16 & 255) / 255.0F;
         float f2 = (float) (par4 >> 8 & 255) / 255.0F;
         float f3 = (float) (par4 & 255) / 255.0F;
+        Tessellator tessellator = Tessellator.instance;
+        GL11.glEnable(3042);
+        GL11.glDisable(3553);
+        GL11.glBlendFunc(770, 771);
+        GL11.glColor4f(f1, f2, f3, f);
+        tessellator.startDrawing(2);
+        tessellator.addVertex((double) par0, (double) par3, 0.0D);
+        tessellator.addVertex((double) par2, (double) par3, 0.0D);
+        tessellator.addVertex((double) par2, (double) par1, 0.0D);
+        tessellator.addVertex((double) par0, (double) par1, 0.0D);
+        tessellator.draw();
+        GL11.glEnable(3553);
+        GL11.glDisable(3042);
+    }
+
+
+/*
+    public static void drawRectLines(int par0, int par1, int par2, int par3, int par4) {
+        int j1;
+        if (par0 < par2) {
+            j1 = par0;
+            par0 = par2;
+            par2 = j1;
+        }
+
+        if (par1 < par3) {
+            j1 = par1;
+            par1 = par3;
+            par3 = j1;
+        }
+
+        float f = (float) (par4 >> 24 & 255) / 255.0F;
+        float f1 = (float) (par4 >> 16 & 255) / 255.0F;
+        float f2 = (float) (par4 >> 8 & 255) / 255.0F;
+        float f3 = (float) (par4 & 255) / 255.0F;
         GL11.glEnable(3042);
         GL11.glDisable(3553);
         GL11.glBlendFunc(770, 771);
@@ -66,6 +98,7 @@ public class GuiUIPlacement extends GuiScreen {
         GL11.glEnable(3553);
         GL11.glDisable(3042);
     }
+*/
 
     @Override
     public void actionPerformed(GuiButton button) {
@@ -96,7 +129,7 @@ public class GuiUIPlacement extends GuiScreen {
     @Override
     public void drawScreen(int x, int y, float tick) {
         this.drawDefaultBackground();
-        this.drawCenteredString(this.fontRenderer, I18n.format("menu.pressESCtoReturn"), this.width / 2, 2, -1);
+        this.drawCenteredString(this.fontRendererObj, I18n.format("menu.pressESCtoReturn"), this.width / 2, 2, -1);
         if (this.selectedUIPlaceable != null) {
             this.selectedUIPlaceable.x = (float) (x - this.offsetX);
             this.selectedUIPlaceable.y = (float) (y - this.offsetY);
@@ -111,16 +144,16 @@ public class GuiUIPlacement extends GuiScreen {
             boolean i = this.inBounds(this.lastSelected.x + (float) this.lastSelected.width + 151.0F, this.lastSelected.y + 42.0F, (float) this.width, 0.0F, (float) this.width, (float) (this.height * 2));
             boolean placeable = this.inBounds(this.lastSelected.x + (float) this.lastSelected.width - 75.0F, this.lastSelected.y, (float) (-this.width), (float) (-this.height), (float) (this.width * 2), (float) this.height);
             boolean bottomSide = this.inBounds(this.lastSelected.x + (float) this.lastSelected.width, this.lastSelected.y + 66.0F, 0.0F, (float) this.height, (float) (this.width * 2), (float) this.height);
-            this.positionTypeButton.x = (int) (this.lastSelected.x + (float) (i ? -100 : this.lastSelected.width + 2));
-            this.positionTypeButton.y = (int) (this.lastSelected.y - (bottomSide ? this.lastSelected.y + 66.0F - (float) this.height : (placeable ? this.lastSelected.y - 0.0F : 0.0F)));
-            this.scaleSlider.x = (int) (this.lastSelected.x + (float) (i ? -154 : this.lastSelected.width + 2));
-            this.scaleSlider.y = (int) (this.lastSelected.y + 22.0F - (bottomSide ? this.lastSelected.y + 66.0F - (float) this.height : (placeable ? this.lastSelected.y - 0.0F : 0.0F)));
-            this.resetButton.x = (int) (this.lastSelected.x + (float) (i ? -100 : this.lastSelected.width + 2));
-            this.resetButton.y = (int) (this.lastSelected.y + 44.0F - (bottomSide ? this.lastSelected.y + 66.0F - (float) this.height : (placeable ? this.lastSelected.y - 0.0F : 0.0F)));
+            this.positionTypeButton.xPosition = (int) (this.lastSelected.x + (float) (i ? -100 : this.lastSelected.width + 2));
+            this.positionTypeButton.yPosition = (int) (this.lastSelected.y - (bottomSide ? this.lastSelected.y + 66.0F - (float) this.height : (placeable ? this.lastSelected.y - 0.0F : 0.0F)));
+            this.scaleSlider.xPosition = (int) (this.lastSelected.x + (float) (i ? -154 : this.lastSelected.width + 2));
+            this.scaleSlider.yPosition = (int) (this.lastSelected.y + 22.0F - (bottomSide ? this.lastSelected.y + 66.0F - (float) this.height : (placeable ? this.lastSelected.y - 0.0F : 0.0F)));
+            this.resetButton.xPosition = (int) (this.lastSelected.x + (float) (i ? -100 : this.lastSelected.width + 2));
+            this.resetButton.yPosition = (int) (this.lastSelected.y + 44.0F - (bottomSide ? this.lastSelected.y + 66.0F - (float) this.height : (placeable ? this.lastSelected.y - 0.0F : 0.0F)));
             this.positionTypeButton.displayString = I18n.format("menu.position") + ": " + this.positionTypes[this.lastSelected.positionType];
-            this.positionTypeButton.drawButton(this.mc, x, y, 0);
-            this.resetButton.drawButton(this.mc, x, y, 0);
-            this.scaleSlider.drawButton(this.mc, x, y, 0);
+            this.positionTypeButton.drawButton(this.mc, x, y);
+            this.resetButton.drawButton(this.mc, x, y);
+            this.scaleSlider.drawButton(this.mc, x, y);
             this.lastSelected.scale = this.scaleSlider.sliderValue;
         }
 
@@ -209,13 +242,7 @@ public class GuiUIPlacement extends GuiScreen {
                 this.selectedUIPlaceable = null;
             }
         }
-
-        try {
-            super.mouseClicked(x, y, b);
-        } catch (IOException var6) {
-            var6.printStackTrace();
-        }
-
+        super.mouseClicked(x, y, b);
     }
 
     @Override

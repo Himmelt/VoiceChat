@@ -17,7 +17,6 @@ public class MicrophoneTester implements Runnable {
     private TargetDataLine line;
     private Thread thread;
 
-
     public MicrophoneTester(VoiceChatClient voiceChat) {
         this.voiceChat = voiceChat;
     }

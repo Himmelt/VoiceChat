@@ -9,11 +9,10 @@ import net.minecraft.client.gui.inventory.GuiFurnace;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.settings.KeyBinding;
 
-class KeySpeakEvent extends KeyEvent {
+public class KeySpeakEvent extends KeyEvent {
 
     private final VoiceChatClient voiceChat;
     private final boolean canSpeak;
-
 
     KeySpeakEvent(VoiceChatClient voiceChat, EnumBinding keyBind, int keyID, boolean repeating) {
         super(keyBind, keyID, repeating);

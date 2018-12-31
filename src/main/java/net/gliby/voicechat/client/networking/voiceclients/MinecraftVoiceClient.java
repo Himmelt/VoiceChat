@@ -12,7 +12,6 @@ public class MinecraftVoiceClient extends VoiceClient {
 
     private final ClientStreamManager soundManager;
 
-
     public MinecraftVoiceClient(EnumVoiceNetworkType enumVoiceServer) {
         super(enumVoiceServer);
         VoiceChat.getProxyInstance();

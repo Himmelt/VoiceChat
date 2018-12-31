@@ -15,7 +15,6 @@ public class ClientStream {
     public PlayerProxy player;
     public boolean dirty;
 
-
     public ClientStream(PlayerProxy proxy, int id, boolean direct) {
         this.id = id;
         this.direct = direct;
@@ -56,7 +55,7 @@ public class ClientStream {
 
         @Override
         public int compare(ClientStream a, ClientStream b) {
-            return a.id > b.id ? 1 : (a.id < b.id ? -1 : 0);
+            return Integer.compare(a.id, b.id);
         }
     }
 }

@@ -11,7 +11,6 @@ public class MovingAverage {
     private final int period;
     private BigDecimal sum;
 
-
     public MovingAverage(int period) {
         this.sum = BigDecimal.ZERO;
         if (period < 0) {

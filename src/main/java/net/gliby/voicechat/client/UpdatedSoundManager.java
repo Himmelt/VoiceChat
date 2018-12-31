@@ -1,10 +1,10 @@
 package net.gliby.voicechat.client;
 
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.gliby.voicechat.VoiceChat;
 import net.minecraft.client.audio.SoundManager;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import paulscode.sound.SoundSystemConfig;
 import paulscode.sound.codecs.CodecJOrbis;
 import paulscode.sound.codecs.CodecWav;

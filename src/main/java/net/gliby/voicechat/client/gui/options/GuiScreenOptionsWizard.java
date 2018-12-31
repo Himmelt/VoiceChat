@@ -11,13 +11,10 @@ import net.gliby.voicechat.client.sound.MicrophoneTester;
 import net.gliby.voicechat.client.textures.IndependentGUITexture;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import org.lwjgl.opengl.GL11;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -96,7 +93,7 @@ public class GuiScreenOptionsWizard extends GuiScreen {
                 break;
             case 2:
                 this.title = I18n.format("menu.selectInputDevice");
-                this.dropDown.drawButton(this.mc, x, y, 0);
+                this.dropDown.drawButton(this.mc, x, y);
                 break;
             case 3:
                 if (this.lastPage != this.currentPage) {
@@ -121,7 +118,7 @@ public class GuiScreenOptionsWizard extends GuiScreen {
                 GL11.glEnable(3008);
                 GL11.glPopMatrix();
                 String ratingText = I18n.format("menu.boostVoiceVolume");
-                this.drawCenteredString(this.fontRenderer, ratingText, this.width / 2, this.height / 2 - 26, -1);
+                this.drawCenteredString(this.fontRendererObj, ratingText, this.width / 2, this.height / 2 - 26, -1);
                 break;
             case 4:
                 this.title = I18n.format("menu.finishWizard");
@@ -145,14 +142,14 @@ public class GuiScreenOptionsWizard extends GuiScreen {
         }
 
         if (this.text != null) {
-            this.fontRenderer.drawSplitString(ChatFormatting.stripFormatting(this.text), this.width / 2 - 107 - 1 + 1, this.height / 2 - 65 + 1, 230, 0);
-            this.fontRenderer.drawSplitString(this.text, this.width / 2 - 107 - 1, this.height / 2 - 65, 230, -1);
+            this.fontRendererObj.drawSplitString(ChatFormatting.stripFormatting(this.text), this.width / 2 - 107 - 1 + 1, this.height / 2 - 65 + 1, 230, 0);
+            this.fontRendererObj.drawSplitString(this.text, this.width / 2 - 107 - 1, this.height / 2 - 65, 230, -1);
         }
 
         for (int k = 0; k < this.buttonList.size(); ++k) {
-            GuiButton guibutton = this.buttonList.get(k);
+            GuiButton guibutton = (GuiButton) this.buttonList.get(k);
             if (guibutton == this.nextButton || guibutton == this.previousButton || guibutton == this.doneButton || this.buttonMap.get(guibutton) != null && this.buttonMap.get(guibutton) == this.currentPage) {
-                guibutton.drawButton(this.mc, x, y, 0);
+                guibutton.drawButton(this.mc, x, y);
             }
         }
 
@@ -162,7 +159,20 @@ public class GuiScreenOptionsWizard extends GuiScreen {
     public void drawTexturedModalRect(float par1, float par2, float par3, float par4, float par5, float par6) {
         float f = 0.00390625F;
         float f1 = 0.00390625F;
-        Tessellator tessellator = Tessellator.getInstance();
+        Tessellator tessellator = Tessellator.instance;
+        tessellator.startDrawingQuads();
+        tessellator.addVertexWithUV((double) (par1 + 0.0F), (double) (par2 + par6), (double) this.zLevel, (double) ((par3 + 0.0F) * 0.00390625F), (double) ((par4 + par6) * 0.00390625F));
+        tessellator.addVertexWithUV((double) (par1 + par5), (double) (par2 + par6), (double) this.zLevel, (double) ((par3 + par5) * 0.00390625F), (double) ((par4 + par6) * 0.00390625F));
+        tessellator.addVertexWithUV((double) (par1 + par5), (double) (par2 + 0.0F), (double) this.zLevel, (double) ((par3 + par5) * 0.00390625F), (double) ((par4 + 0.0F) * 0.00390625F));
+        tessellator.addVertexWithUV((double) (par1 + 0.0F), (double) (par2 + 0.0F), (double) this.zLevel, (double) ((par3 + 0.0F) * 0.00390625F), (double) ((par4 + 0.0F) * 0.00390625F));
+        tessellator.draw();
+    }
+
+/*
+    public void drawTexturedModalRect(float par1, float par2, float par3, float par4, float par5, float par6) {
+        float f = 0.00390625F;
+        float f1 = 0.00390625F;
+        Tessellator tessellator = Tessellator.instance;
         BufferBuilder renderer = tessellator.getBuffer();
         renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
         renderer.pos((double) (par1 + 0.0F), (double) (par2 + par6), (double) this.zLevel).tex((double) ((par3 + 0.0F) * 0.00390625F), (double) ((par4 + par6) * 0.00390625F)).endVertex();
@@ -171,6 +181,7 @@ public class GuiScreenOptionsWizard extends GuiScreen {
         renderer.pos((double) (par1 + 0.0F), (double) (par2 + 0.0F), (double) this.zLevel).tex((double) ((par3 + 0.0F) * 0.00390625F), (double) ((par4 + 0.0F) * 0.00390625F)).endVertex();
         tessellator.draw();
     }
+*/
 
     @Override
     public void initGui() {
@@ -191,7 +202,18 @@ public class GuiScreenOptionsWizard extends GuiScreen {
         this.buttonMap.put(this.backButton, 1);
         this.buttonMap.put(this.boostSlider, 3);
         this.dirty = true;
-        this.textBatch = new String[]{I18n.format("menu.setupWizardPageOne", new Object[0]).replaceAll(Pattern.quote("$n"), "\n").replaceAll(Pattern.quote("$a"), this.voiceChat.keyManager.getKeyName(EnumBinding.OPEN_GUI_OPTIONS)), I18n.format("menu.setupWizardPageTwo", new Object[0]).replaceAll(Pattern.quote("$n"), "\n"), I18n.format("menu.setupWizardPageThree", new Object[0]).replaceAll(Pattern.quote("$n"), "\n"), I18n.format("menu.setupWizardPageFour", new Object[0]).replaceAll(Pattern.quote("$n"), "\n").replaceAll(Pattern.quote("$a"), this.voiceChat.keyManager.getKeyName(EnumBinding.OPEN_GUI_OPTIONS)).replaceAll(Pattern.quote("$b"), this.voiceChat.keyManager.getKeyName(EnumBinding.SPEAK))};
+        this.textBatch = new String[]{I18n.format("menu.setupWizardPageOne")
+                .replaceAll(Pattern.quote("$n"), "\n")
+                .replaceAll(Pattern.quote("$a"), this.voiceChat.keyManager.getKeyName(EnumBinding.OPEN_GUI_OPTIONS)),
+                I18n.format("menu.setupWizardPageTwo").
+                        replaceAll(Pattern.quote("$n"), "\n"),
+                I18n.format("menu.setupWizardPageThree").
+                        replaceAll(Pattern.quote("$n"), "\n"),
+                I18n.format("menu.setupWizardPageFour")
+                        .replaceAll(Pattern.quote("$n"), "\n")
+                        .replaceAll(Pattern.quote("$a"), this.voiceChat.keyManager.getKeyName(EnumBinding.OPEN_GUI_OPTIONS))
+                        .replaceAll(Pattern.quote("$b"), this.voiceChat.keyManager.getKeyName(EnumBinding.SPEAK))
+        };
     }
 
     @Override
@@ -206,20 +228,17 @@ public class GuiScreenOptionsWizard extends GuiScreen {
             }
 
             if (this.dropDown.mousePressed(this.mc, x, y) && b == 0) {
-                this.dropDown.playPressSound(this.mc.getSoundHandler());
+                //this.dropDown.func_146113_a(this.mc.func_147118_V());
+                this.dropDown.func_146113_a(this.mc.getSoundHandler());
                 this.dropDown.dropDownMenu = !this.dropDown.dropDownMenu;
             }
         }
 
         if (b == 0) {
-            for (int var8 = 0; var8 < this.buttonList.size(); ++var8) {
-                GuiButton guibutton = this.buttonList.get(var8);
+            for (Object o : this.buttonList) {
+                GuiButton guibutton = (GuiButton) o;
                 if ((guibutton == this.nextButton || guibutton == this.previousButton || this.doneButton == guibutton || this.buttonMap.get(guibutton) != null && this.buttonMap.get(guibutton) == this.currentPage) && guibutton.mousePressed(this.mc, x, y)) {
-                    try {
-                        super.mouseClicked(x, y, b);
-                    } catch (IOException var7) {
-                        var7.printStackTrace();
-                    }
+                    super.mouseClicked(x, y, b);
                 }
             }
         }
@@ -243,44 +262,42 @@ public class GuiScreenOptionsWizard extends GuiScreen {
             if (this.currentPage == 1) {
                 this.previousButton.visible = false;
                 this.doneButton.visible = false;
-                this.nextButton.x = this.width / 2 - 90;
-                this.nextButton.y = this.height / 2 + 60;
+                this.nextButton.xPosition = this.width / 2 - 90;
+                this.nextButton.yPosition = this.height / 2 + 60;
                 this.nextButton.setWidth(180);
                 this.nextButton.setHeight(20);
             } else if (this.currentPage == 2) {
                 this.previousButton.visible = false;
                 this.doneButton.visible = false;
-                this.nextButton.x = this.width / 2 - 90;
-                this.nextButton.y = this.height / 2 + 60;
+                this.nextButton.xPosition = this.width / 2 - 90;
+                this.nextButton.yPosition = this.height / 2 + 60;
                 this.nextButton.setWidth(180);
                 this.nextButton.setHeight(20);
             } else if (this.currentPage == 4) {
                 this.nextButton.visible = false;
                 this.doneButton.visible = true;
-                this.doneButton.x = this.width / 2;
-                this.doneButton.y = this.height / 2 + 60;
+                this.doneButton.xPosition = this.width / 2;
+                this.doneButton.yPosition = this.height / 2 + 60;
                 this.doneButton.setWidth(95);
                 this.doneButton.setHeight(20);
-                this.previousButton.x = this.width / 2 - 95;
-                this.previousButton.y = this.height / 2 + 60;
+                this.previousButton.xPosition = this.width / 2 - 95;
+                this.previousButton.yPosition = this.height / 2 + 60;
                 this.previousButton.setWidth(95);
                 this.previousButton.setHeight(20);
             } else {
                 this.previousButton.visible = true;
                 this.nextButton.visible = true;
                 this.doneButton.visible = false;
-                this.nextButton.x = this.width / 2;
-                this.nextButton.y = this.height / 2 + 60;
+                this.nextButton.xPosition = this.width / 2;
+                this.nextButton.yPosition = this.height / 2 + 60;
                 this.nextButton.setWidth(95);
                 this.nextButton.setHeight(20);
-                this.previousButton.x = this.width / 2 - 95;
-                this.previousButton.y = this.height / 2 + 60;
+                this.previousButton.xPosition = this.width / 2 - 95;
+                this.previousButton.yPosition = this.height / 2 + 60;
                 this.previousButton.setWidth(95);
                 this.previousButton.setHeight(20);
             }
-
             this.dirty = false;
         }
-
     }
 }

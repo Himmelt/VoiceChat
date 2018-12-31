@@ -1,18 +1,16 @@
 package net.gliby.voicechat.client.gui;
 
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.ModMetadata;
 import net.gliby.gman.ModInfo;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.common.ModMetadata;
 import org.lwjgl.opengl.GL11;
 
 import javax.imageio.ImageIO;
@@ -29,7 +27,6 @@ public class GuiScreenDonate extends GuiScreen {
     private final ModMetadata modMetadata;
     private ResourceLocation cachedLogo;
     private Dimension cachedLogoDimensions;
-
 
     public GuiScreenDonate(ModInfo info, ModMetadata modMetadata, GuiScreen parent) {
         this.parent = parent;
@@ -58,9 +55,9 @@ public class GuiScreenDonate extends GuiScreen {
         this.renderModLogo(this.info.modId, this.modMetadata, true);
         GL11.glPopMatrix();
         String s = I18n.format("menu.gman.supportGliby.description");
-        this.fontRenderer.drawSplitString(s, this.width / 2 - 150, this.height / 2 - 50, 300, -1);
+        this.fontRendererObj.drawSplitString(s, this.width / 2 - 150, this.height / 2 - 50, 300, -1);
         String s1 = I18n.format("menu.gman.supportGliby.contact");
-        this.fontRenderer.drawSplitString(s1, this.width / 2 - 150, this.height / 2 + 35, 300, -1);
+        this.fontRendererObj.drawSplitString(s1, this.width / 2 - 150, this.height / 2 + 35, 300, -1);
         super.drawScreen(x, y, tick);
     }
 
@@ -107,7 +104,29 @@ public class GuiScreenDonate extends GuiScreen {
                 }
 
                 if (this.cachedLogo != null && draw) {
+
                     this.mc.renderEngine.bindTexture(this.cachedLogo);
+                    double scaleX = (double) this.cachedLogoDimensions.width / 200.0D;
+                    double scaleY = (double) this.cachedLogoDimensions.height / 65.0D;
+                    double scale = 1.0D;
+                    if (scaleX > 1.0D || scaleY > 1.0D) {
+                        scale = 1.0D / Math.max(scaleX, scaleY);
+                    }
+
+                    Dimension var10000 = this.cachedLogoDimensions;
+                    var10000.width = (int) ((double) var10000.width * scale);
+                    var10000 = this.cachedLogoDimensions;
+                    var10000.height = (int) ((double) var10000.height * scale);
+                    Tessellator tess = Tessellator.instance;
+                    tess.startDrawingQuads();
+                    tess.addVertexWithUV(0.0D, (double) this.cachedLogoDimensions.height, (double) this.zLevel, 0.0D, 1.0D);
+                    tess.addVertexWithUV((double) (0 + this.cachedLogoDimensions.width), (double) (0 + this.cachedLogoDimensions.height), (double) this.zLevel, 1.0D, 1.0D);
+                    tess.addVertexWithUV((double) (0 + this.cachedLogoDimensions.width), 0.0D, (double) this.zLevel, 1.0D, 0.0D);
+                    tess.addVertexWithUV(0.0D, 0.0D, (double) this.zLevel, 0.0D, 0.0D);
+                    tess.draw();
+
+
+                    /*this.mc.renderEngine.bindTexture(this.cachedLogo);
                     double e1 = (double) this.cachedLogoDimensions.width / 200.0D;
                     double scaleY = (double) this.cachedLogoDimensions.height / 65.0D;
                     double scale = 1.0D;
@@ -117,19 +136,18 @@ public class GuiScreenDonate extends GuiScreen {
 
                     this.cachedLogoDimensions.width = (int) ((double) this.cachedLogoDimensions.width * scale);
                     this.cachedLogoDimensions.height = (int) ((double) this.cachedLogoDimensions.height * scale);
-                    Tessellator tessellator = Tessellator.getInstance();
+                    Tessellator tessellator = Tessellator.instance;
                     BufferBuilder renderer = tessellator.getBuffer();
                     renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
                     renderer.pos(0.0D, (double) this.cachedLogoDimensions.height, (double) this.zLevel).tex(0.0D, 1.0D).endVertex();
                     renderer.pos((double) (this.cachedLogoDimensions.width), (double) (this.cachedLogoDimensions.height), (double) this.zLevel).tex(1.0D, 1.0D).endVertex();
                     renderer.pos((double) (this.cachedLogoDimensions.width), 0.0D, (double) this.zLevel).tex(1.0D, 0.0D).endVertex();
                     renderer.pos(0.0D, 0.0D, (double) this.zLevel).tex(0.0D, 0.0D).endVertex();
-                    tessellator.draw();
+                    tessellator.draw();*/
                 }
             } catch (IOException var15) {
                 var15.printStackTrace();
             }
         }
-
     }
 }

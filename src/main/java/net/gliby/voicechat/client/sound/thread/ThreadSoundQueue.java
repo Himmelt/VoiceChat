@@ -8,7 +8,6 @@ public class ThreadSoundQueue implements Runnable {
     private final ClientStreamManager sndManager;
     private final Object notifier = new Object();
 
-
     public ThreadSoundQueue(ClientStreamManager sndManager) {
         this.sndManager = sndManager;
     }

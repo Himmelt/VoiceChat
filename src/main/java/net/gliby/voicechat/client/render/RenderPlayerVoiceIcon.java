@@ -1,5 +1,6 @@
 package net.gliby.voicechat.client.render;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.gliby.voicechat.client.VoiceChatClient;
 import net.gliby.voicechat.client.sound.ClientStream;
 import net.gliby.voicechat.client.textures.IndependentGUITexture;
@@ -7,11 +8,10 @@ import net.gliby.voicechat.common.MathUtility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 
 public class RenderPlayerVoiceIcon extends Gui {
@@ -26,7 +26,7 @@ public class RenderPlayerVoiceIcon extends Gui {
     }
 
     private void enableEntityLighting(Entity entity, float partialTicks) {
-        int i1 = entity.getBrightnessForRender();
+        int i1 = entity.getBrightnessForRender(partialTicks);
         if (entity.isBurning()) {
             i1 = 15728880;
         }
@@ -51,7 +51,58 @@ public class RenderPlayerVoiceIcon extends Gui {
             GL11.glDisable(2929);
             GL11.glEnable(3042);
             OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-            this.translateWorld(this.mc, event.getPartialTicks());
+            this.translateWorld(this.mc, event.partialTicks);
+
+            for (int i = 0; (float) i < MathUtility.clamp((float) VoiceChatClient.getSoundManager().currentStreams.size(), 0.0F, (float) this.voiceChat.getSettings().getMaximumRenderableVoiceIcons()); ++i) {
+                ClientStream stream = (ClientStream) VoiceChatClient.getSoundManager().currentStreams.get(i);
+                if (stream.player.getPlayer() != null && stream.player.usesEntity) {
+                    EntityLivingBase entity = (EntityLivingBase) stream.player.getPlayer();
+                    if (!entity.isInvisible() && !this.mc.gameSettings.hideGUI) {
+                        GL11.glPushMatrix();
+                        this.enableEntityLighting(entity, event.partialTicks);
+                        GL11.glNormal3f(0.0F, 1.0F, 0.0F);
+                        GL11.glDepthMask(false);
+                        this.translateEntity(entity, event.partialTicks);
+                        GL11.glRotatef(-RenderManager.instance.playerViewY, 0.0F, 1.0F, 0.0F);
+                        GL11.glTranslatef(-0.25F, entity.height + 0.7F, 0.0F);
+                        GL11.glRotatef(RenderManager.instance.playerViewX, 1.0F, 0.0F, 0.0F);
+                        GL11.glScalef(0.015F, 0.015F, 1.0F);
+                        IndependentGUITexture.TEXTURES.bindTexture(this.mc);
+                        GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.25F);
+                        if (!entity.isSneaking()) {
+                            this.renderIcon();
+                        }
+
+                        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                        GL11.glEnable(2929);
+                        GL11.glDepthMask(true);
+                        this.renderIcon();
+                        IndependentGUITexture.bindPlayer(this.mc, entity);
+                        GL11.glTranslatef(20.0F, 30.0F, 0.0F);
+                        GL11.glScalef(-1.0F, -1.0F, -1.0F);
+                        GL11.glScalef(0.48F, 0.24F, 0.0F);
+                        this.drawTexturedModalRect(0, 0, 32, 64, 32, 64);
+                        this.disableEntityLighting();
+                        GL11.glPopMatrix();
+                    }
+                }
+            }
+
+            GL11.glDisable(3042);
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        }
+
+    }
+
+
+/*
+    @SubscribeEvent
+    public void render(RenderWorldLastEvent event) {
+        if (!VoiceChatClient.getSoundManager().currentStreams.isEmpty() && this.voiceChat.getSettings().isVoiceIconAllowed()) {
+            GL11.glDisable(2929);
+            GL11.glEnable(3042);
+            OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+            this.translateWorld(this.mc, event.partialTicks);
 
             for (int i = 0; (float) i < MathUtility.clamp((float) VoiceChatClient.getSoundManager().currentStreams.size(), 0.0F, (float) this.voiceChat.getSettings().getMaximumRenderableVoiceIcons()); ++i) {
                 ClientStream stream = VoiceChatClient.getSoundManager().currentStreams.get(i);
@@ -99,6 +150,7 @@ public class RenderPlayerVoiceIcon extends Gui {
         }
 
     }
+*/
 
     private void renderIcon() {
         this.drawTexturedModalRect(0, 0, 0, 0, 54, 46);
@@ -120,6 +172,6 @@ public class RenderPlayerVoiceIcon extends Gui {
     }
 
     public void translateWorld(Minecraft mc, float tick) {
-        GL11.glTranslated(-(mc.player.prevPosX + (mc.player.posX - mc.player.prevPosX) * (double) tick), -(mc.player.prevPosY + (mc.player.posY - mc.player.prevPosY) * (double) tick), -(mc.player.prevPosZ + (mc.player.posZ - mc.player.prevPosZ) * (double) tick));
+        GL11.glTranslated(-(mc.thePlayer.prevPosX + (mc.thePlayer.posX - mc.thePlayer.prevPosX) * (double) tick), -(mc.thePlayer.prevPosY + (mc.thePlayer.posY - mc.thePlayer.prevPosY) * (double) tick), -(mc.thePlayer.prevPosZ + (mc.thePlayer.posZ - mc.thePlayer.prevPosZ) * (double) tick));
     }
 }

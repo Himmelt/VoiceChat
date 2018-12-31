@@ -1,18 +1,16 @@
 package net.gliby.voicechat.client.networking.game;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.network.FMLNetworkEvent;
+import cpw.mods.fml.relauncher.Side;
 import net.gliby.voicechat.VoiceChat;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
-import net.minecraftforge.fml.relauncher.Side;
 
 public class ClientDisconnectHandler {
-
     @SubscribeEvent
-    public void onClientDisconnected(ClientDisconnectionFromServerEvent event) {
+    public void onClientDisconnected(FMLNetworkEvent.ClientDisconnectionFromServerEvent event) {
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
             VoiceChat.getProxyInstance().getClientNetwork().stopClientNetwork();
         }
-
     }
 }

@@ -7,7 +7,6 @@ public class Datalet {
     public final byte[] data;
     final boolean direct;
 
-
     Datalet(boolean direct, int id, byte[] data) {
         this.direct = direct;
         this.id = id;

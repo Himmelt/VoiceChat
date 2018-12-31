@@ -19,22 +19,22 @@
  */
 package net.gliby.voicechat.client.gui;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.gliby.voicechat.client.VoiceChatClient;
 import net.gliby.voicechat.client.sound.ClientStreamManager;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.*;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
 
-public class GuiScreenLocalMute
-        extends GuiScreen {
+public class GuiScreenLocalMute extends GuiScreen {
     protected GuiScreen parent;
     private List listPlayers;
     private GuiOptionButton doneButton;
@@ -55,13 +55,13 @@ public class GuiScreenLocalMute
         switch (button) {
             case 0: {
                 this.playerNotFound = false;
-                EntityPlayer entityPlayer = this.mc.world.getPlayerEntityByName(this.playerTextField.getText().trim().replaceAll(" ", ""));
+                EntityPlayer entityPlayer = this.mc.theWorld.getPlayerEntityByName(this.playerTextField.getText().trim().replaceAll(" ", ""));
                 if (entityPlayer != null) {
-                    if (entityPlayer.isUser() || VoiceChatClient.getSoundManager().playersMuted.contains(entityPlayer.getEntityId()))
+                    if (entityPlayer instanceof EntityPlayerSP || VoiceChatClient.getSoundManager().playersMuted.contains(entityPlayer.getEntityId()))
                         break;
                     VoiceChatClient.getSoundManager().playersMuted.add(entityPlayer.getEntityId());
                     VoiceChatClient.getSoundManager();
-                    ClientStreamManager.playerMutedData.put(entityPlayer.getEntityId(), entityPlayer.getName());
+                    ClientStreamManager.playerMutedData.put(entityPlayer.getEntityId(), entityPlayer.getCommandSenderName());
                     break;
                 }
                 this.playerNotFound = true;
@@ -76,9 +76,9 @@ public class GuiScreenLocalMute
     @Override
     public void drawScreen(int par1, int par2, float par3) {
         this.listPlayers.drawScreen(par1, par2, par3);
-        this.drawCenteredString(this.fontRenderer, I18n.format("menu.mutedPlayers", (Object[]) new Object[0]), this.width / 2, 16, -1);
+        this.drawCenteredString(this.fontRendererObj, I18n.format("menu.mutedPlayers"), this.width / 2, 16, -1);
         if (this.playerNotFound) {
-            this.drawCenteredString(this.fontRenderer, "\u00a7c" + I18n.format("commands.generic.player.notFound", (Object[]) new Object[0]), this.width / 2, this.height - 59, -1);
+            this.drawCenteredString(this.fontRendererObj, "\u00a7c" + I18n.format("commands.generic.player.notFound"), this.width / 2, this.height - 59, -1);
         }
         this.playerTextField.drawTextBox();
         super.drawScreen(par1, par2, par3);
@@ -89,11 +89,11 @@ public class GuiScreenLocalMute
         Keyboard.enableRepeatEvents(true);
         this.autoCompletionNames = new ArrayList<String>();
         int heightOffset = -9;
-        this.playerTextField = new GuiTextField(0, this.fontRenderer, this.width / 2 - 100, this.height - 57 - -9, 130, 20);
+        this.playerTextField = new GuiTextField(this.fontRendererObj, this.width / 2 - 100, this.height - 57 - -9, 130, 20);
         this.playerTextField.setFocused(true);
-        this.doneButton = new GuiOptionButton(0, this.width / 2 + 32, this.height - 57 - -9, I18n.format("menu.add", (Object[]) new Object[0]));
+        this.doneButton = new GuiOptionButton(0, this.width / 2 + 32, this.height - 57 - -9, I18n.format("menu.add"));
         buttonList.add(this.doneButton);
-        this.doneButton = new GuiOptionButton(1, this.width / 2 - 75, this.height - 32 - -9, I18n.format("gui.done", (Object[]) new Object[0]));
+        this.doneButton = new GuiOptionButton(1, this.width / 2 - 75, this.height - 32 - -9, I18n.format("gui.done"));
         buttonList.add(this.doneButton);
         this.listPlayers = new List();
         this.listPlayers.registerScrollButtons(7, 8);
@@ -103,11 +103,7 @@ public class GuiScreenLocalMute
     protected void keyTyped(char par1, int par2) {
         this.playerNotFound = false;
         this.playerTextField.textboxKeyTyped(par1, par2);
-        try {
-            super.keyTyped(par1, par2);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        super.keyTyped(par1, par2);
         switch (par2) {
             case 28: {
                 this.actionPerformed(0);
@@ -119,9 +115,11 @@ public class GuiScreenLocalMute
                     break;
                 }
                 this.autoCompletionNames.clear();
-                for (Object obj : this.mc.world.playerEntities.toArray()) {
+                for (Object obj : this.mc.theWorld.playerEntities) {
                     String s2;
-                    if (!(obj instanceof EntityOtherPlayerMP) || !(s2 = ((EntityOtherPlayerMP) obj).getName()).toLowerCase().startsWith(this.playerTextField.getText().toLowerCase().trim().replaceAll(" ", "")))
+                    if (!(obj instanceof EntityOtherPlayerMP) || !(s2 = ((EntityOtherPlayerMP) obj).getCommandSenderName())
+                            .toLowerCase().startsWith(this.playerTextField.getText()
+                                    .toLowerCase().trim().replaceAll(" ", "")))
                         continue;
                     this.autoCompletionNames.add(s2);
                 }
@@ -149,11 +147,11 @@ public class GuiScreenLocalMute
         }
     }
 
-    @Override
-    public void handleMouseInput() throws IOException {
-        super.handleMouseInput();
-        this.listPlayers.handleMouseInput();
-    }
+//    @Override
+//    public void handleMouseInput() {
+//        super.handleMouseInput();
+//        this.listPlayers.handleMouseInput();
+//    }
 
     @Override
     public void updateScreen() {
@@ -161,8 +159,7 @@ public class GuiScreenLocalMute
     }
 
     @SideOnly(value = Side.CLIENT)
-    class List
-            extends GuiSlot {
+    class List extends GuiSlot {
         private final Rectangle buttonCross;
 
         public List() {
@@ -176,10 +173,10 @@ public class GuiScreenLocalMute
         }
 
         @Override
-        protected void drawSlot(int entryID, int p_180791_2_, int par2, int p_180791_4_, int p_180791_5_, int p_180791_6_, float hz) {
+        protected void drawSlot(int entryID, int p_180791_2_, int par2, int p_180791_4_, Tessellator tessellator, int p_180791_5_, int p_180791_6_) {
             VoiceChatClient.getSoundManager();
-            GuiScreenLocalMute.this.drawCenteredString(GuiScreenLocalMute.this.fontRenderer, ClientStreamManager.playerMutedData.get(VoiceChatClient.getSoundManager().playersMuted.get(entryID)), this.width / 2, par2 + 1, 16777215);
-            GuiScreenLocalMute.this.drawCenteredString(GuiScreenLocalMute.this.fontRenderer, "\u00a7lX", this.width / 2 + 88, par2 + 3, 16711680);
+            GuiScreenLocalMute.this.drawCenteredString(GuiScreenLocalMute.this.fontRendererObj, ClientStreamManager.playerMutedData.get(VoiceChatClient.getSoundManager().playersMuted.get(entryID)), this.width / 2, par2 + 1, 16777215);
+            GuiScreenLocalMute.this.drawCenteredString(GuiScreenLocalMute.this.fontRendererObj, "\u00a7lX", this.width / 2 + 88, par2 + 3, 16711680);
         }
 
         @Override
@@ -208,4 +205,3 @@ public class GuiScreenLocalMute
     }
 
 }
-

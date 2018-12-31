@@ -20,6 +20,8 @@
  */
 package net.gliby.voicechat.common;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.event.*;
 import net.gliby.gman.GMan;
 import net.gliby.gman.ModInfo;
 import net.gliby.voicechat.VoiceChat;
@@ -34,8 +36,6 @@ import net.gliby.voicechat.common.networking.voiceservers.VoiceServer;
 import net.gliby.voicechat.common.networking.voiceservers.udp.UDPVoiceServer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.event.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

@@ -1,13 +1,10 @@
 package net.gliby.voicechat.client.device;
 
-import javax.sound.sampled.Mixer.Info;
-
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-
-import javax.sound.sampled.TargetDataLine;
-
 import org.apache.commons.lang3.SystemUtils;
+
+import javax.sound.sampled.Mixer.Info;
+import javax.sound.sampled.TargetDataLine;
+import java.io.UnsupportedEncodingException;
 
 public class Device {
 
@@ -37,14 +34,14 @@ public class Device {
     }
 
     public String getName() {
-    	String name = info.getName();
-    	if (SystemUtils.IS_OS_WINDOWS) {
-    		try {
-				name = new String(info.getName().getBytes("Windows-1252"), "Windows-1251");
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
-    	}
+        String name = info.getName();
+        if (SystemUtils.IS_OS_WINDOWS) {
+            try {
+                name = new String(info.getName().getBytes("Windows-1252"), "Windows-1251");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
         return name != null ? name : "none";
     }
 

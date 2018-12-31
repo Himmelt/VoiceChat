@@ -1,5 +1,6 @@
 package net.gliby.voicechat.common.networking;
 
+import net.gliby.voicechat.VoiceChat;
 import net.gliby.voicechat.common.VoiceChatServer;
 import net.gliby.voicechat.common.api.VoiceChatAPI;
 import net.gliby.voicechat.common.api.events.ServerStreamEvent;
@@ -26,7 +27,6 @@ public class ServerStreamManager {
     private HashMap receivedEntityData;
     private Thread threadUpdate;
     private Thread treadQueue;
-
 
     ServerStreamManager(VoiceChatServer voiceChat) {
         this.voiceChat = voiceChat;
@@ -60,7 +60,7 @@ public class ServerStreamManager {
 
     public void feedStreamToAllPlayers(ServerStream stream, ServerDatalet voiceData) {
         EntityPlayerMP speaker = voiceData.player;
-        List<EntityPlayerMP> players = voiceChat.getMinecraftServer().getPlayerList().getPlayers();
+        ArrayList<EntityPlayerMP> players = VoiceChat.getPlayers(voiceChat.getMinecraftServer());
         int i;
         EntityPlayerMP target;
         if (voiceData.end) {
@@ -97,7 +97,7 @@ public class ServerStreamManager {
 
     public void feedStreamToWorld(ServerStream stream, ServerDatalet voiceData) {
         EntityPlayerMP speaker = voiceData.player;
-        List players = speaker.world.playerEntities;
+        List players = speaker.worldObj.playerEntities;
         int i;
         EntityPlayerMP target;
         if (voiceData.end) {
@@ -121,7 +121,7 @@ public class ServerStreamManager {
 
     public void feedWithinEntityWithRadius(ServerStream stream, ServerDatalet voiceData, int distance) {
         EntityPlayerMP speaker = stream.player;
-        List players = speaker.world.playerEntities;
+        List players = speaker.worldObj.playerEntities;
         int i;
         EntityPlayerMP target;
         double d4;
@@ -175,7 +175,7 @@ public class ServerStreamManager {
     }
 
     public void giveEntity(EntityPlayerMP receiver, EntityPlayerMP speaker) {
-        this.voiceChat.getServerNetwork().sendEntityData(receiver, speaker.getEntityId(), speaker.getName(), speaker.posX, speaker.posY, speaker.posZ);
+        this.voiceChat.getServerNetwork().sendEntityData(receiver, speaker.getEntityId(), speaker.getCommandSenderName(), speaker.posX, speaker.posY, speaker.posZ);
     }
 
     public void giveStream(ServerStream stream, ServerDatalet let) {

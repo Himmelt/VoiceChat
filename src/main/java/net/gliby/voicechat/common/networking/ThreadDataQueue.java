@@ -4,7 +4,6 @@ public class ThreadDataQueue implements Runnable {
 
     private final ServerStreamManager manager;
 
-
     public ThreadDataQueue(ServerStreamManager manager) {
         this.manager = manager;
     }

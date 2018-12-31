@@ -1,15 +1,14 @@
 package net.gliby.voicechat.common.api;
 
+import cpw.mods.fml.common.eventhandler.EventBus;
 import net.gliby.voicechat.VoiceChat;
 import net.gliby.voicechat.common.networking.ServerStreamHandler;
-import net.minecraftforge.fml.common.eventhandler.EventBus;
 
 public class VoiceChatAPI {
 
     private static VoiceChatAPI instance;
     private ServerStreamHandler handler;
     private EventBus eventBus;
-
 
     public static VoiceChatAPI instance() {
         return instance;

@@ -1,5 +1,6 @@
 package net.gliby.voicechat.client.gui;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.gliby.voicechat.VoiceChat;
 import net.gliby.voicechat.client.VoiceChatClient;
 import net.gliby.voicechat.client.debug.Statistics;
@@ -10,11 +11,9 @@ import net.gliby.voicechat.common.MathUtility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.entity.player.EnumPlayerModelParts;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
-import net.minecraftforge.client.event.RenderGameOverlayEvent.Post;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.Text;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
@@ -28,10 +27,9 @@ public class GuiInGameHandlerVoiceChat extends Gui {
     private long lastFrame;
     private long lastFPS;
     private float fade = 0.0F;
-    private ScaledResolution res;
+    private ScaledResolution scaled;
     private Vector2f position;
     private UIPosition positionUI;
-
 
     public GuiInGameHandlerVoiceChat(VoiceChatClient voiceChat) {
         this.voiceChat = voiceChat;
@@ -62,7 +60,7 @@ public class GuiInGameHandlerVoiceChat extends Gui {
 
     @SubscribeEvent
     public void render(Text text) {
-        if (text.getType() == ElementType.DEBUG && VoiceChat.getProxyInstance().getSettings().isDebug()) {
+        if (text.type == ElementType.DEBUG && VoiceChat.getProxyInstance().getSettings().isDebug()) {
             VoiceChat.getProxyInstance();
             Statistics stats = VoiceChatClient.getStatistics();
             if (stats != null) {
@@ -71,7 +69,7 @@ public class GuiInGameHandlerVoiceChat extends Gui {
                 String decodedAvg = ValueFormat.format((long) stats.getDecodedAverageDataReceived(), settings);
                 String encodedData = ValueFormat.format((long) stats.getEncodedDataReceived(), settings);
                 String decodedData = ValueFormat.format((long) stats.getDecodedDataReceived(), settings);
-                ArrayList<String> right = text.getRight();
+                ArrayList<String> right = text.right;
                 right.add("Voice Chat Debug Info");
                 right.add("VC Data [ENC AVG]: " + encodedAvg + "");
                 right.add("VC Data [DEC AVG]: " + decodedAvg + "");
@@ -83,9 +81,9 @@ public class GuiInGameHandlerVoiceChat extends Gui {
     }
 
     @SubscribeEvent
-    public void renderInGameGui(Post event) {
-        if (event.getType() == ElementType.HOTBAR) {
-            if (this.res == null) {
+    public void renderInGameGui(RenderGameOverlayEvent.Post event) {
+        if (event.type == ElementType.HOTBAR) {
+            if (this.scaled == null) {
                 this.getDelta();
                 this.lastFPS = this.getTime();
                 if (this.voiceChat.getSettings().isSetupNeeded()) {
@@ -93,9 +91,9 @@ public class GuiInGameHandlerVoiceChat extends Gui {
                 }
             }
 
-            this.res = new ScaledResolution(this.mc);
-            int width = this.res.getScaledWidth();
-            int height = this.res.getScaledHeight();
+            this.scaled = new ScaledResolution(this.mc, mc.displayWidth, mc.displayHeight);
+            int width = this.scaled.getScaledWidth();
+            int height = this.scaled.getScaledHeight();
             int delta = this.getDelta();
             this.calcDelta();
             if (!VoiceChat.getProxyInstance().isRecorderActive()) {
@@ -114,6 +112,7 @@ public class GuiInGameHandlerVoiceChat extends Gui {
                 this.positionUI = this.voiceChat.getSettings().getUIPositionSpeak();
                 this.position = this.getPosition(width, height, this.positionUI);
                 if (this.positionUI.scale != 0.0F) {
+
                     GL11.glPushMatrix();
                     GL11.glEnable(3042);
                     GL11.glBlendFunc(770, 771);
@@ -133,17 +132,45 @@ public class GuiInGameHandlerVoiceChat extends Gui {
                             this.drawTexturedModalRect(40, -3, 38, 47, 16, 49);
                     }
 
-                    this.mc.getTextureManager().bindTexture(this.mc.player.getLocationSkin());
+                    this.mc.getTextureManager().bindTexture(this.mc.thePlayer.getLocationSkin());
+                    GL11.glScalef(0.6F, 0.3F, 0.0F);
+                    GL11.glTranslatef(0.0F, 47.0F, 0.0F);
+                    this.drawTexturedModalRect(0, 0, 32, 64, 32, 64);
+                    GL11.glDisable(3042);
+                    GL11.glPopMatrix();
+
+                    ///////
+                    /*GL11.glPushMatrix();
+                    GL11.glEnable(3042);
+                    GL11.glBlendFunc(770, 771);
+                    GL11.glColor4f(1.0F, 1.0F, 1.0F, this.fade * this.voiceChat.getSettings().getUIOpacity());
+                    IndependentGUITexture.TEXTURES.bindTexture(this.mc);
+                    GL11.glTranslatef(this.position.x + (float) this.positionUI.info.offsetX, this.position.y + (float) this.positionUI.info.offsetY, 0.0F);
+                    GL11.glScalef(this.positionUI.scale, this.positionUI.scale, 1.0F);
+                    this.drawTexturedModalRect(0, 0, 0, 0, 54, 46);
+                    switch ((int) ((float) (Minecraft.getSystemTime() % 1000L) / 350.0F)) {
+                        case 0:
+                            this.drawTexturedModalRect(12, -3, 0, 47, 22, 49);
+                            break;
+                        case 1:
+                            this.drawTexturedModalRect(31, -3, 23, 47, 14, 49);
+                            break;
+                        case 2:
+                            this.drawTexturedModalRect(40, -3, 38, 47, 16, 49);
+                    }
+
+                    this.mc.getTextureManager().bindTexture(this.mc.thePlayer.getLocationSkin());
                     GL11.glTranslatef(0.0F, 14.0F, 0.0F);
                     GL11.glScalef(2.4F, 2.4F, 0.0F);
                     Gui.drawScaledCustomSizeModalRect(0, 0, 8.0F, 8.0F, 8, 8, 8, 8, 64.0F, 64.0F);
-                    if (this.mc.player != null && this.mc.player.isWearing(EnumPlayerModelParts.HAT)) {
+                    if (this.mc.thePlayer != null && this.mc.thePlayer.isWearing(EnumPlayerModelParts.HAT)) {
                         Gui.drawScaledCustomSizeModalRect(0, 0, 40.0F, 8.0F, 8, 8, 8, 8, 64.0F, 64.0F);
                     }
 
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                     GL11.glDisable(3042);
-                    GL11.glPopMatrix();
+                    GL11.glPopMatrix();*/
+                    /////
                 }
             }
 
@@ -175,6 +202,34 @@ public class GuiInGameHandlerVoiceChat extends Gui {
                         this.drawString(this.mc.fontRenderer, s, 0, 0, -1);
                         GL11.glPopMatrix();
                         GL11.glPushMatrix();
+                        GL11.glTranslatef(3.0F, 3.0F, 0.0F);
+                        GL11.glScalef(0.48F, 0.24F, 0.0F);
+                        if (playerExists) {
+                            IndependentGUITexture.bindPlayer(this.mc, stream.player.getPlayer());
+                        } else {
+                            IndependentGUITexture.bindDefaultPlayer(this.mc);
+                        }
+
+                        GL11.glColor4f(1.0F, 1.0F, 1.0F, this.voiceChat.getSettings().getUIOpacity());
+                        this.drawTexturedModalRect(0, 0, 32, 64, 32, 64);
+                        this.drawTexturedModalRect(0, 0, 160, 64, 32, 64);
+                        GL11.glPopMatrix();
+                        GL11.glPopMatrix();
+
+                        /*GL11.glPushMatrix();
+                        GL11.glTranslatef(this.position.x + (float) this.positionUI.info.offsetX, this.position.y + (float) this.positionUI.info.offsetY + (float) (i * 23) * scale, 0.0F);
+                        GL11.glScalef(scale, scale, 0.0F);
+                        GL11.glColor4f(1.0F, 1.0F, 1.0F, this.voiceChat.getSettings().getUIOpacity());
+                        GL11.glTranslatef(0.0F, 0.0F, 0.0F);
+                        IndependentGUITexture.TEXTURES.bindTexture(this.mc);
+                        this.drawTexturedModalRect(0, 0, 56, stream.special * 22, 109, 22);
+                        GL11.glPushMatrix();
+                        scale = MathUtility.clamp(50.5F / (float) length, 0.0F, 1.25F);
+                        GL11.glTranslatef(25.0F + scale / 2.0F, 11.0F - (float) (this.mc.fontRenderer.FONT_HEIGHT - 1) * scale / 2.0F, 0.0F);
+                        GL11.glScalef(scale, scale, 0.0F);
+                        this.drawString(this.mc.fontRenderer, s, 0, 0, -1);
+                        GL11.glPopMatrix();
+                        GL11.glPushMatrix();
                         if (playerExists) {
                             IndependentGUITexture.bindPlayer(this.mc, stream.player.getPlayer());
                         } else {
@@ -185,12 +240,12 @@ public class GuiInGameHandlerVoiceChat extends Gui {
                         GL11.glTranslatef(3.25F, 3.25F, 0.0F);
                         GL11.glScalef(2.0F, 2.0F, 0.0F);
                         Gui.drawScaledCustomSizeModalRect(0, 0, 8.0F, 8.0F, 8, 8, 8, 8, 64.0F, 64.0F);
-                        if (this.mc.player != null && this.mc.player.isWearing(EnumPlayerModelParts.HAT)) {
+                        if (this.mc.thePlayer != null && this.mc.thePlayer.isWearing(EnumPlayerModelParts.HAT)) {
                             Gui.drawScaledCustomSizeModalRect(0, 0, 40.0F, 8.0F, 8, 8, 8, 8, 64.0F, 64.0F);
                         }
 
                         GL11.glPopMatrix();
-                        GL11.glPopMatrix();
+                        GL11.glPopMatrix();*/
                     }
                 }
 

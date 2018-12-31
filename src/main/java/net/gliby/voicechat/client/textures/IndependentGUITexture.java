@@ -12,13 +12,12 @@ public class IndependentGUITexture {
     private static final ResourceLocation steve = new ResourceLocation("textures/entity/steve.png");
     private final ResourceLocation resource;
 
-
     public IndependentGUITexture(String texture) {
         this.resource = new ResourceLocation("gvc:textures/gui/" + texture + ".png");
     }
 
     public static void bindClientPlayer(Minecraft mc) {
-        mc.getTextureManager().bindTexture(mc.player.getLocationSkin());
+        mc.getTextureManager().bindTexture(mc.thePlayer.getLocationSkin());
     }
 
     public static void bindDefaultPlayer(Minecraft mc) {

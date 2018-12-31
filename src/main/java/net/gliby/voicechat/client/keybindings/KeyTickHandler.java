@@ -1,15 +1,13 @@
 package net.gliby.voicechat.client.keybindings;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.relauncher.Side;
 import net.gliby.voicechat.client.VoiceChatClient;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Type;
-import net.minecraftforge.fml.relauncher.Side;
 
 public class KeyTickHandler {
 
     VoiceChatClient voiceChat;
-
 
     public KeyTickHandler(VoiceChatClient voiceChat) {
         this.voiceChat = voiceChat;
@@ -17,9 +15,8 @@ public class KeyTickHandler {
 
     @SubscribeEvent
     public void tick(TickEvent event) {
-        if (event.type == Type.PLAYER && event.side == Side.CLIENT) {
+        if (event.type == TickEvent.Type.PLAYER && event.side == Side.CLIENT) {
             this.voiceChat.keyManager.keyEvent(null);
         }
-
     }
 }

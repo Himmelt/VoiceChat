@@ -1,9 +1,9 @@
 package net.gliby.voicechat.common.api.events;
 
+import cpw.mods.fml.common.eventhandler.Event;
 import net.gliby.voicechat.common.networking.ServerDatalet;
 import net.gliby.voicechat.common.networking.ServerStream;
 import net.gliby.voicechat.common.networking.ServerStreamManager;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 public class ServerStreamEvent extends Event {
 

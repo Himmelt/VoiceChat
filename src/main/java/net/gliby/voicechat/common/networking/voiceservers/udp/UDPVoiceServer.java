@@ -45,8 +45,7 @@ public class UDPVoiceServer extends VoiceAuthenticatedServer {
         return EnumVoiceNetworkType.UDP;
     }
 
-    public MinecraftServer getMinecraftServer()
-    {
+    public MinecraftServer getMinecraftServer() {
         return voiceChat.getMinecraftServer();
     }
 

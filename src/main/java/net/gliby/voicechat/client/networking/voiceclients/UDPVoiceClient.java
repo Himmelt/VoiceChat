@@ -135,7 +135,6 @@ public class UDPVoiceClient extends VoiceAuthenticatedClient {
                 var6.printStackTrace();
             }
         }
-
     }
 
     @Override
@@ -144,6 +143,5 @@ public class UDPVoiceClient extends VoiceAuthenticatedClient {
         if (this.datagramSocket != null) {
             this.datagramSocket.close();
         }
-
     }
 }

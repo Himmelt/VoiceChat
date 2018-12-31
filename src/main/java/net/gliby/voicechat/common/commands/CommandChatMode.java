@@ -9,16 +9,21 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.ChatComponentText;
 
 import java.util.List;
 
 public class CommandChatMode extends CommandBase {
 
-    @Override
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] par2ArrayOfStr, BlockPos pos) {
-        return par2ArrayOfStr.length == 1 ? getListOfStringsMatchingLastWord(par2ArrayOfStr, "distance", "global", "world") : (par2ArrayOfStr.length == 2 ? getListOfStringsMatchingLastWord(par2ArrayOfStr, this.getListOfPlayerUsernames(server)) : null);
+    public List addTabCompletionOptions(ICommandSender sender, String[] args) {
+        return args.length == 1 ?
+                getListOfStringsMatchingLastWord(args, "distance", "global", "world")
+                : (args.length == 2 ? getListOfStringsMatchingLastWord(args, this.getListOfPlayerUsernames()) :
+                null);
+    }
+
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args) {
+        return addTabCompletionOptions(sender, args);
     }
 
     public String getChatMode(int chatMode) {
@@ -29,38 +34,41 @@ public class CommandChatMode extends CommandBase {
         return !par2Str.equalsIgnoreCase("distance") && !par2Str.startsWith("d") && !par2Str.equalsIgnoreCase("0") ? (!par2Str.equalsIgnoreCase("world") && !par2Str.startsWith("w") && !par2Str.equalsIgnoreCase("1") ? (!par2Str.equalsIgnoreCase("global") && !par2Str.startsWith("g") && !par2Str.equalsIgnoreCase("2") ? 0 : 2) : 1) : 0;
     }
 
-    @Override
     public String getName() {
         return "vchatmode";
     }
 
-    @Override
-    public String getUsage(ICommandSender par1ICommandSender) {
+    public String getUsage(ICommandSender sender) {
         return "/vchatmode <mode> or /vchatmode <mode> [player]";
     }
 
-    protected String[] getListOfPlayerUsernames(MinecraftServer server) {
-        return server.getOnlinePlayerNames();
+    protected String[] getListOfPlayerUsernames() {
+        return MinecraftServer.getServer().getAllUsernames();
     }
 
-    @Override
     public int getRequiredPermissionLevel() {
         return 3;
     }
 
-    @Override
-    public boolean isUsernameIndex(String[] par1ArrayOfStr, int par2) {
-        return par2 == 1;
+    public String getCommandName() {
+        return getName();
     }
 
-    @Override
-    public void execute(MinecraftServer server, ICommandSender par1ICommandSender, String[] par2ArrayOfStr) throws CommandException {
-        if (par2ArrayOfStr.length > 0) {
-            int chatMode = this.getChatModeFromCommand(par1ICommandSender, par2ArrayOfStr[0]);
+    public String getCommandUsage(ICommandSender sender) {
+        return getUsage(sender);
+    }
+
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+        processCommand(sender, args);
+    }
+
+    public void processCommand(ICommandSender sender, String[] args) {
+        if (args.length > 0) {
+            int chatMode = this.getChatModeFromCommand(sender, args[0]);
             EntityPlayerMP player = null;
 
             try {
-                player = par2ArrayOfStr.length >= 2 ? getPlayer(server, par1ICommandSender, par2ArrayOfStr[1]) : getCommandSenderAsPlayer(par1ICommandSender);
+                player = args.length >= 2 ? getPlayer(sender, args[1]) : getCommandSenderAsPlayer(sender);
             } catch (PlayerNotFoundException var7) {
                 var7.printStackTrace();
             }
@@ -73,23 +81,26 @@ public class CommandChatMode extends CommandBase {
                     stream.dirty = true;
                 }
 
-                if (player != par1ICommandSender) {
-                    notifyCommandListener(par1ICommandSender, this, player.getName() + " set chat mode to " + this.getChatMode(chatMode).toUpperCase() + " (" + chatMode + ")", par2ArrayOfStr[0]);
+                if (player != sender) {
+                    func_152373_a(sender, this, player.getCommandSenderName() + " set chat mode to " + this.getChatMode(chatMode).toUpperCase() + " (" + chatMode + ")", args[0]);
                 } else {
-                    player.sendMessage(new TextComponentString("Set own chat mode to " + this.getChatMode(chatMode).toUpperCase() + " (" + chatMode + ")"));
+                    player.addChatMessage(new ChatComponentText("Set own chat mode to " + this.getChatMode(chatMode).toUpperCase() + " (" + chatMode + ")"));
                     switch (chatMode) {
                         case 0:
-                            player.sendMessage(new TextComponentString("Only players near you can hear you."));
+                            player.addChatMessage(new ChatComponentText("Only players near you can hear you."));
                             break;
                         case 1:
-                            player.sendMessage(new TextComponentString("Every player in this world can hear you"));
+                            player.addChatMessage(new ChatComponentText("Every player in this world can hear you"));
                             break;
                         case 2:
-                            player.sendMessage(new TextComponentString("Every player can hear you."));
+                            player.addChatMessage(new ChatComponentText("Every player can hear you."));
                     }
                 }
             }
         }
+    }
 
+    public boolean isUsernameIndex(String[] args, int index) {
+        return index == 1;
     }
 }

@@ -1,20 +1,16 @@
 package net.gliby.voicechat.common.networking.packets;
 
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import net.gliby.voicechat.VoiceChat;
 import net.gliby.voicechat.common.networking.MinecraftPacket;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class MinecraftServerVoicePacket extends MinecraftPacket implements IMessageHandler<MinecraftServerVoicePacket, IMessage> {
 
     private byte[] data;
     private byte divider;
-
-
-    public MinecraftServerVoicePacket() {
-    }
 
     public MinecraftServerVoicePacket(byte divider, byte[] data) {
         this.divider = divider;
@@ -30,7 +26,7 @@ public class MinecraftServerVoicePacket extends MinecraftPacket implements IMess
 
     @Override
     public IMessage onMessage(MinecraftServerVoicePacket packet, MessageContext ctx) {
-        VoiceChat.getServerInstance().getVoiceServer().handleVoiceData(ctx.getServerHandler().player, packet.data, packet.divider, ctx.getServerHandler().player.getEntityId(), false);
+        VoiceChat.getServerInstance().getVoiceServer().handleVoiceData(ctx.getServerHandler().playerEntity, packet.data, packet.divider, ctx.getServerHandler().playerEntity.getEntityId(), false);
         return null;
     }
 

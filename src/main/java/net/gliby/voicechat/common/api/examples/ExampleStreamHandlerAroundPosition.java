@@ -1,5 +1,6 @@
 package net.gliby.voicechat.common.api.examples;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.gliby.voicechat.VoiceChat;
 import net.gliby.voicechat.common.api.events.ServerStreamEvent;
 import net.gliby.voicechat.common.networking.ServerDatalet;
@@ -7,7 +8,6 @@ import net.gliby.voicechat.common.networking.ServerStream;
 import net.gliby.voicechat.common.networking.ServerStreamManager;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.List;
 
@@ -15,8 +15,8 @@ public class ExampleStreamHandlerAroundPosition {
 
     @SubscribeEvent
     public void feedStream(ServerStreamEvent.StreamFeed event) {
-        event.stream.player.mcServer.getPlayerList();
-        this.feedStreamPositionWithRadius(event.streamManager, event.stream, event.voiceLet, event.stream.player.world, 0.0D, 128.0D, 0.0D, VoiceChat.getServerInstance().getServerSettings().getSoundDistance());
+        //event.stream.player.mcServer.getPlayerList();
+        this.feedStreamPositionWithRadius(event.streamManager, event.stream, event.voiceLet, event.stream.player.worldObj, 0.0D, 128.0D, 0.0D, VoiceChat.getServerInstance().getServerSettings().getSoundDistance());
     }
 
     public void feedStreamPositionWithRadius(ServerStreamManager streamManager, ServerStream stream, ServerDatalet voiceData, World world, double x, double y, double z, int distance) {

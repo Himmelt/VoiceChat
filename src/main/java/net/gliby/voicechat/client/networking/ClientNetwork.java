@@ -83,16 +83,18 @@ public class ClientNetwork {
                 break;
             }
             case UDP: {
+
                 String serverAddress = ip;
-                if (serverAddress.isEmpty()) {
-                    ServerData serverData = Minecraft.getMinecraft().getCurrentServerData();
-                    if (serverData != null) {
-                        ServerAddress server = ServerAddress.fromString(serverData.serverIP);
+                if (ip.isEmpty()) {
+                    ServerData serverData;
+                    if ((serverData = Minecraft.getMinecraft().func_147104_D()) != null) {
+                        ServerAddress server = ServerAddress.func_78860_a(serverData.serverIP);
                         serverAddress = server.getIP();
                     } else {
                         serverAddress = "localhost";
                     }
                 }
+
                 this.voiceClient = new UDPVoiceClient(type, hash, serverAddress, udpPort);
                 break;
             }

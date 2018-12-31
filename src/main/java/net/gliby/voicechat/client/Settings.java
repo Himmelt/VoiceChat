@@ -1,5 +1,7 @@
 package net.gliby.voicechat.client;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.gliby.voicechat.VoiceChat;
 import net.gliby.voicechat.client.device.Device;
 import net.gliby.voicechat.client.device.DeviceHandler;
@@ -7,8 +9,6 @@ import net.gliby.voicechat.client.gui.EnumUIPlacement;
 import net.gliby.voicechat.client.gui.UIPosition;
 import net.gliby.voicechat.common.MathUtility;
 import net.gliby.voicechat.common.ModPackSettings;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
